@@ -57,7 +57,8 @@ public class Solucion {
         return algoritmo + 
                 "\nSecuencia de maquinas:"+seleccionadas.toString() + 
                 "\nTotal de piezas: " + totalPiezas + 
-                "\nMetrica :"+metrica+" (" +costo+ ")\n";
+                "\nTotal de puestas en funcionamiento: " + seleccionadas.size() + 
+                "\n"+metrica+" (" +costo+ ")\n";
     }
 }
 

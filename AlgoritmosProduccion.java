@@ -48,11 +48,12 @@ public class AlgoritmosProduccion {
         - Las ramas representan las decisiones:
         - Rama izquierda: incluir la máquina actual
         - Rama derecha: excluir la máquina actual
-        - Los estados finales (hojas del árbol) ocurren cuando: 
+        - Los estados finales, podas (hojas del árbol) ocurren cuando: 
             -Se alcanza el objetivo
             -Se consideraron todas las máquinas
-            -Se supera el objetivo 
-            -Poda por tamaño
+            -si ya hay una solucion y la actual ya tiene mas maquinas
+            -si la suma de las piezas actuales y las siguientes es mayor al objetivo
+
         - Un estado se considera solución cuando:
             -Se alcanza exactamente el objetivo
             -Es mejor que la solución anterior
@@ -62,7 +63,7 @@ public class AlgoritmosProduccion {
         Solucion actual = new Solucion("Backtracking", "cantidad de llamadas recursivas");
         Solucion mejor = new Solucion("Backtracking", "cantidad de llamadas recursivas");
         int[] llamadas = {0}; // contador de llamadas recursivas como array para poder modificarlo por referencia
-    
+
         backtracking(maquinas, objetivo, actual, mejor, 0, llamadas); 
     
         if (mejor.getTotalPiezas() == objetivo) {
@@ -93,18 +94,18 @@ public class AlgoritmosProduccion {
             return;
         }
         
-        // 2. si ya superamos el objetivo
-        if (actual.getTotalPiezas() > objetivo) {
-            return;
-        }
-        
-        // 3. poda por tamanio: si ya tenemos una solucion y la actual ya tiene mas maquinas, no seguir
+        // 2. poda por tamanio: si ya tenemos una solucion y la actual ya tiene mas maquinas, no seguir
         if (!mejor.getSeleccionadas().isEmpty() && actual.getSeleccionadas().size() >= mejor.getSeleccionadas().size()) {
             return;
         }
         
+        // 3. poda si la suma de las piezas actuales y las siguientes es mayor al objetivo
+        if (maquinas.get(i).getPiezas() + actual.getTotalPiezas() > objetivo) {
+            return;
+        }
         actual.agregar(maquinas.get(i));
         backtracking(maquinas, objetivo, actual, mejor, i, llamadas);
+        
         actual.quitarUltima();
        
         // no incluir la maquina actual y pasar a la siguiente
