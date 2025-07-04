@@ -2,8 +2,8 @@ import java.util.*;
 import java.io.*;
 public class Main {
     public static void main(String[] args) throws IOException {
-        int objetivo = LectorArchivo.leerPiezasTotales("maquinas.txt"); 
-        List<Maquina> maquinas = LectorArchivo.leerMaquinas("maquinas.txt");
+        int objetivo = LectorArchivo.leerPiezasTotales("caso1.txt"); 
+        List<Maquina> maquinas = LectorArchivo.leerMaquinas("caso1.txt");
         //greedy
         System.out.println(AlgoritmosProduccion.resolverGreedy(maquinas, objetivo));
         //backtracking

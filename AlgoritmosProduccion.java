@@ -19,7 +19,6 @@ public class AlgoritmosProduccion {
     public static Solucion resolverGreedy(List<Maquina> maquinas, int objetivo) {
         Collections.sort(maquinas); // mayor a menor
 
-        int costo = 0;
         Solucion solucion = new Solucion("Greedy", "cantidad de candidatos considerados");
         int suma = 0;
         int i = 0;
@@ -29,14 +28,13 @@ public class AlgoritmosProduccion {
             if (m.getPiezas()+suma <= objetivo) {
                 solucion.agregar(m);
                 suma += m.getPiezas();
-                costo++;
             }
             else {
                 i++;
             }
         }
         if (suma == objetivo) {
-            solucion.setCosto(costo);
+            solucion.setCosto(i+1);
             return solucion;    
         }
         return new Solucion(); 
@@ -52,7 +50,6 @@ public class AlgoritmosProduccion {
             -Se alcanza el objetivo
             -Se consideraron todas las máquinas
             -si ya hay una solucion y la actual ya tiene mas maquinas
-            -si la suma de las piezas actuales y las siguientes es mayor al objetivo
 
         - Un estado se considera solución cuando:
             -Se alcanza exactamente el objetivo
@@ -75,40 +72,45 @@ public class AlgoritmosProduccion {
     }
     
     private static void backtracking(List<Maquina> maquinas, int objetivo, Solucion actual, Solucion mejor, int i, int[] llamadas) {
-        llamadas[0]++; // incrementar contador de llamadas recursivas
-    
-        // corte - si encontramos una solución
+        llamadas[0]++;
+
+        // CORTE
+        // Si encontramos una solucion
         if (actual.getTotalPiezas() == objetivo) {
             if (mejor.getSeleccionadas().isEmpty() || actual.getSeleccionadas().size() < mejor.getSeleccionadas().size()) {
-                // copia la solucion actual a la mejor
                 mejor.getSeleccionadas().clear();
                 mejor.getSeleccionadas().addAll(actual.getSeleccionadas());
                 mejor.setTotalPiezas(actual.getTotalPiezas());
             }
             return;
-        }
-    
-        // podas
-        // 1. si ya consideramos todas las maquinas
-        if (i >= maquinas.size()) {
-            return;
-        }
-        
-        // 2. poda por tamanio: si ya tenemos una solucion y la actual ya tiene mas maquinas, no seguir
-        if (!mejor.getSeleccionadas().isEmpty() && actual.getSeleccionadas().size() >= mejor.getSeleccionadas().size()) {
-            return;
-        }
-        
-        // 3. poda si la suma de las piezas actuales y las siguientes es mayor al objetivo
-        if (maquinas.get(i).getPiezas() + actual.getTotalPiezas() > objetivo) {
-            return;
-        }
-        actual.agregar(maquinas.get(i));
-        backtracking(maquinas, objetivo, actual, mejor, i, llamadas);
-        
-        actual.quitarUltima();
-       
-        // no incluir la maquina actual y pasar a la siguiente
-        backtracking(maquinas, objetivo, actual, mejor, i + 1, llamadas);
+        }else{
+            //PODAS
+            //si no es posible una mejor solucion
+            if (mejor.getSeleccionadas().size()==1) {
+                return;
+            }
+            //no hay mas maquinas
+            if (i >= maquinas.size()) {
+                return;
+            }
+            // poda por tamanio solo si ya tengo una solucion
+            if (!mejor.getSeleccionadas().isEmpty() && actual.getSeleccionadas().size() >= mejor.getSeleccionadas().size()) {
+                return;
+            }
+
+            //RECURSION
+            //incluyendo la maquina actual
+            //poda si incluyendo nos pasamos
+            if (actual.getTotalPiezas() + maquinas.get(i).getPiezas() <= objetivo) {
+                actual.agregar(maquinas.get(i));
+                backtracking(maquinas, objetivo, actual, mejor, i, llamadas);
+                //back
+                actual.quitarUltima();
+            }
+            
+            //sin incluir la maquina actual
+            backtracking(maquinas, objetivo, actual, mejor, i+1, llamadas);
     }
+        }
+
 }
